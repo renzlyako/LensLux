@@ -1,0 +1,80 @@
+/* ===== FEATURES ===== */
+.features {
+  background: white;
+  padding: 5rem 2rem;
+  border-top: 0.5px solid #ececec;
+  border-bottom: 0.5px solid #ececec;
+}
+
+.features-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3rem;
+}
+
+/* ── Each item ── */
+.feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+/* ── Icon ── */
+.feature-icon {
+  color: #0a0a14;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.25rem;
+  transition: transform 0.3s ease;
+}
+
+.feature-item:hover .feature-icon {
+  transform: translateY(-4px);
+}
+
+/* ── Title ── */
+.feature-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #0a0a14;
+  margin: 0;
+}
+
+/* ── Sub ── */
+.feature-sub {
+  font-size: 0.85rem;
+  color: #888;
+  line-height: 1.7;
+  margin: 0;
+  max-width: 220px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .features {
+    padding: 4rem 1.5rem;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .feature-sub {
+    font-size: 0.8rem;
+  }
+}

@@ -1,0 +1,238 @@
+.navbar {
+  position: fixed;
+  top: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: calc(100% - 4rem);
+  max-width: 1000px;
+  background: rgba(10, 10, 20, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 50px;
+  border: 0.5px solid rgba(255, 255, 255, 0.12);
+  transition: background 0.3s;
+}
+
+.nav-container {
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.nav-logo {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: white;
+  text-decoration: none;
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+  width: 160px; 
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  justify-content: center;
+  flex: 1; 
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  color: white;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  width: 160px; 
+  justify-content: flex-end; 
+}
+
+.nav-icon-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.3rem;
+  position: relative;
+  text-decoration: none;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.nav-icon-btn:hover {
+  color: white;
+}
+
+.nav-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  background: #e74c3c;
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 0.1rem 0.3rem;
+  border-radius: 50%;
+  min-width: 14px;
+  text-align: center;
+}
+
+.nav-cta {
+  background: white;
+  color: #0a0a14;
+  border: none;
+  padding: 0.5rem 1.25rem;
+  border-radius: 50px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s;
+  white-space: nowrap;
+}
+
+.nav-cta:hover {
+  background: #f0f0f0;
+  transform: translateY(-1px);
+}
+
+.nav-search-drop {
+  background: rgba(10, 10, 20, 0.92);
+  backdrop-filter: blur(18px);
+  border-top: 0.5px solid rgba(255,255,255,0.08);
+  padding: 1rem 1.75rem;
+  display: flex;
+  justify-content: center;
+  border-radius: 0 0 28px 28px; 
+  animation: dropDown 0.2s ease;
+}
+
+.nav-cta-register {
+  background: rgba(255, 255, 255, 0.12);
+  border: 0.5px solid rgba(255, 255, 255, 0.5);
+  color: white;
+}
+
+.nav-cta-register:hover {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+.nav-username {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+@keyframes dropDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.nav-search-drop form {
+  display: flex;
+  gap: 0;
+  width: 100%;
+  max-width: 520px;
+}
+
+.nav-search-drop input {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  background: rgba(255,255,255,0.08);
+  border: 0.5px solid rgba(255,255,255,0.15);
+  border-radius: 8px 0 0 8px;
+  color: white;
+  font-size: 0.88rem;
+  outline: none;
+}
+
+.nav-search-drop input::placeholder {
+  color: rgba(255,255,255,0.4);
+}
+
+.nav-search-drop button {
+  padding: 0.65rem 1.25rem;
+  background: white;
+  color: #0a0a14;
+  border: none;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.nav-search-drop button:hover {
+  background: #f0f0f0;
+}
+
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.nav-mobile-menu {
+  display: none;
+  flex-direction: column;
+  background: rgba(10, 10, 20, 0.97);
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.nav-mobile-menu.open {
+  display: flex;
+  max-height: 500px;
+  padding: 1rem 0;
+  border-radius: 0 0 28px 28px;
+}
+
+.nav-mobile-menu a,
+.nav-mobile-menu button {
+  color: rgba(255,255,255,0.8);
+  text-decoration: none;
+  padding: 0.75rem 2rem;
+  font-size: 0.95rem;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  border-bottom: 0.5px solid rgba(255,255,255,0.05);
+  transition: color 0.2s, background 0.2s;
+}
+
+.nav-mobile-menu a:hover,
+.nav-mobile-menu button:hover {
+  color: white;
+  background: rgba(255,255,255,0.05);
+}
+
+@media (max-width: 768px) {
+  .nav-links    { display: none; }
+  .nav-actions  { display: none; }
+  .nav-hamburger { display: block; }
+}

@@ -1,0 +1,100 @@
+.shop-by-style {
+  padding: 0 2rem 6rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.style-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.style-card {
+  text-decoration: none;
+  color: #0a0a14;
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f5f5f5;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.style-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+}
+
+.style-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.style-img-default,
+.style-img-hover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.5s ease;
+}
+
+.style-img-hover  { opacity: 0; }
+
+.style-card:hover .style-img-default { opacity: 0; }
+.style-card:hover .style-img-hover   { opacity: 1; }
+
+.style-card-label {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.style-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #aaa;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+
+.style-card-label h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.15rem;
+  color: #0a0a14;
+}
+
+.style-card-label p {
+  font-size: 0.78rem;
+  color: #888;
+  margin: 0;
+}
+
+.style-arrow {
+  margin-left: auto;
+  font-size: 1.1rem;
+  color: #aaa;
+  transition: transform 0.3s ease, color 0.3s ease;
+  flex-shrink: 0;
+}
+
+.style-card:hover .style-arrow {
+  transform: translateX(4px);
+  color: #0a0a14;
+}
+
+@media (max-width: 768px) {
+  .style-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .shop-by-style {
+    padding: 0 1.5rem 4rem;
+  }
+}

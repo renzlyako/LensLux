@@ -1,0 +1,113 @@
+.promo-banner {
+  position: relative;
+  width: 100%;
+  height: 90vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.promo-banner-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+  transition: transform 0.8s ease;
+}
+
+.promo-banner:hover .promo-banner-img {
+  transform: scale(1.03);
+}
+
+.promo-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.15) 0%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+  z-index: 1;
+}
+
+.promo-banner-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2rem;
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.promo-banner-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+.promo-banner-headline {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 800;
+  color: white;
+  line-height: 1.08;
+  letter-spacing: -1.5px;
+  margin: 0;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.promo-banner-sub {
+  font-size: clamp(0.88rem, 1.5vw, 1rem);
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.7;
+  margin: 0;
+}
+
+.promo-banner-btn {
+  display: inline-block;
+  padding: 0.85rem 2.25rem;
+  background: white;
+  color: #0a0a14;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 50px;
+  margin-top: 0.5rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease,
+              background 0.2s ease, color 0.2s ease;
+}
+
+.promo-banner-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+  background: #0a0a14;
+  color: white;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .promo-banner {
+    height: 70vh;
+  }
+
+  .promo-banner-headline {
+    letter-spacing: -0.5px;
+  }
+
+  .promo-banner-btn {
+    padding: 0.75rem 1.75rem;
+    font-size: 0.78rem;
+  }
+}

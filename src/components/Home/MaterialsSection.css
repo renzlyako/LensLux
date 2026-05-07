@@ -1,0 +1,214 @@
+/* ===== MATERIALS SECTION ===== */
+.materials-section {
+  padding: 6rem 2rem;
+}
+
+.materials-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 4rem;
+}
+
+.materials-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #999;
+  margin: 0 0 1.25rem;
+}
+
+.materials-headline {
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  color: #0a0a14;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  margin: 0 0 1.25rem;
+}
+
+.materials-sub {
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.75;
+  margin: 0;
+}
+
+/* ── Image wrapper ── */
+.materials-img-wrap {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  overflow: visible;
+}
+
+.materials-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.hotspot-anchor {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.hotspot-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0a0a14;
+  border: 2px solid white;
+  box-shadow: 0 0 0 3px rgba(10, 10, 20, 0.2);
+  opacity: 0;
+  z-index: 3;
+  transition: background 0.3s ease, box-shadow 0.3s ease,
+              transform 0.3s ease;
+  pointer-events: none;
+}
+
+.hotspot-dot.hovered {
+  background: #3b82f6;
+  box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.25);
+}
+
+.hotspot-line {
+  position: absolute;
+  top: 50%;
+  height: 1px;
+  width: 0;
+  background: #0a0a14;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.hotspot-line--left {
+  right: 0;
+  transform-origin: right center;
+}
+
+.hotspot-line--right {
+  left: 0;
+  transform-origin: left center;
+}
+
+.hotspot-label {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  border: 0.5px solid #eee;
+  white-space: nowrap;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: all;
+  cursor: pointer;
+  z-index: 4;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.hotspot-label--left {
+  right: 80px; 
+}
+
+.hotspot-label--right {
+  left: 80px; 
+}
+
+.hotspot-label.hovered {
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.hotspot-preview {
+  height: 0;
+  overflow: hidden;
+  transition: height 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hotspot-preview.visible {
+  height: 180px;
+}
+
+.hotspot-preview img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.hotspot-label.hovered .hotspot-preview img {
+  transform: scale(1.05);
+}
+
+.hotspot-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.5rem 0.85rem;
+}
+
+.hotspot-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #0a0a14;
+  letter-spacing: 0.2px;
+}
+
+.hotspot-sub {
+  font-size: 0.68rem;
+  color: #888;
+  font-weight: 400;
+}
+
+.triggered .hotspot-dot {
+  animation: dotPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.triggered .hotspot-line {
+  animation: lineDraw 0.5s ease forwards;
+}
+
+.triggered .hotspot-label {
+  animation: labelFade 0.4s ease forwards;
+}
+
+@keyframes dotPop {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes lineDraw {
+  from { width: 0; }
+  to   { width: 80px; }
+}
+
+@keyframes labelFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .materials-section { padding: 4rem 1.5rem; }
+  .materials-header  { margin-bottom: 2.5rem; }
+  .materials-headline { letter-spacing: -0.5px; }
+  .hotspot-line      { display: none; }
+  .hotspot-label--left  { right: 0; }
+  .hotspot-label--right { left: 0; }
+  .hotspot-preview.visible { height: 100px; }
+  .hotspot-preview img    { height: 100px; }
+  .hotspot-name { font-size: 0.65rem; }
+  .hotspot-sub  { display: none; }
+}
