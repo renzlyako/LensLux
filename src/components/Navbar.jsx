@@ -1,27 +1,35 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Heart, ShoppingBag, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
 
 const navLinks = [
-  { label: 'Collection', href: '#collection' },
-  { label: 'New In',     href: '#new-in'     },
-  { label: 'Trending',   href: '#trending'   },
-  { label: 'Lookbook',   href: '#lookbook'   },
-  { label: 'Reviews',    href: '#reviews'    },
+  { label: 'Collection', href: '/collection',  type: 'route'  },
+  { label: 'New In',     href: '#new-in',       type: 'scroll' },
+  { label: 'Trending',   href: '#trending',     type: 'scroll' },
+  { label: 'Lookbook',   href: '#lookbook',     type: 'scroll' },
+  { label: 'Reviews',    href: '#reviews',      type: 'scroll' },
 ];
 
 const Navbar = () => {
-  const [menuOpen, setMenuOpen]     = useState(false);
+  const [menuOpen, setMenuOpen]       = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { user, logout }            = useAuth();
-  const navigate                    = useNavigate();
-  const location                    = useLocation();
+  const { user, logout }              = useAuth();
+  const navigate                      = useNavigate();
+  const location                      = useLocation();
 
-  const handleNavClick = (e, href) => {
+  const handleNavClick = (e, link) => {
     e.preventDefault();
-    const id = href.replace('#', '');
 
+    if (link.type === 'route') {
+      navigate(link.href);
+      setMenuOpen(false);
+      return;
+    }
+
+    // Scroll type
+    const id = link.href.replace('#', '');
     if (location.pathname !== '/') {
       navigate('/');
       setTimeout(() => {
@@ -52,28 +60,36 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="nav-container">
 
-        {}
+        {/* Logo */}
         <Link to="/" className="nav-logo">LensLux</Link>
 
-        {}
+        {/* Center links */}
         <div className="nav-links">
           {navLinks.map(link => (
             <a
               key={link.label}
               href={link.href}
               className="nav-link"
-              onClick={e => handleNavClick(e, link.href)}
+              onClick={e => handleNavClick(e, link)}
             >
               {link.label}
             </a>
           ))}
         </div>
 
-        {}
+        {/* Right actions */}
         <div className="nav-actions">
           {user ? (
             <>
-              <span className="nav-username">Hi, {user.name}</span>
+              <Link to="/wishlist" className="nav-icon-btn" aria-label="Favorites">
+                <Heart size={18} strokeWidth={1.5} />
+              </Link>
+              <Link to="/cart" className="nav-icon-btn" aria-label="Cart">
+                <ShoppingBag size={18} strokeWidth={1.5} />
+              </Link>
+              <Link to="/orders" className="nav-icon-btn" aria-label="Profile">
+                <User size={18} strokeWidth={1.5} />
+              </Link>
               <button onClick={handleLogout} className="nav-cta">Logout</button>
             </>
           ) : (
@@ -84,7 +100,7 @@ const Navbar = () => {
           )}
         </div>
 
-        {}
+        {/* Mobile hamburger */}
         <button
           className="nav-hamburger"
           onClick={() => setMenuOpen(m => !m)}
@@ -94,7 +110,7 @@ const Navbar = () => {
         </button>
       </div>
 
-      {}
+      {/* Search dropdown */}
       {menuOpen && (
         <div className="nav-search-drop">
           <form onSubmit={handleSearch}>
@@ -110,20 +126,22 @@ const Navbar = () => {
         </div>
       )}
 
-      {}
+      {/* Mobile menu */}
       <div className={`nav-mobile-menu ${menuOpen ? 'open' : ''}`}>
         {navLinks.map(link => (
           <a
             key={link.label}
             href={link.href}
-            onClick={e => handleNavClick(e, link.href)}
+            onClick={e => handleNavClick(e, link)}
           >
             {link.label}
           </a>
         ))}
         {user ? (
           <>
-            <Link to="/orders" onClick={() => setMenuOpen(false)}>Orders</Link>
+            <Link to="/wishlist" onClick={() => setMenuOpen(false)}>Favorites</Link>
+            <Link to="/cart"     onClick={() => setMenuOpen(false)}>Cart</Link>
+            <Link to="/orders"   onClick={() => setMenuOpen(false)}>Orders</Link>
             <button onClick={handleLogout}>Logout</button>
           </>
         ) : (

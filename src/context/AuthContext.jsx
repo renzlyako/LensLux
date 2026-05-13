@@ -1,60 +1,67 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 
 const AuthContext = createContext();
 
+const ADMIN_EMAIL = 'admin@lenslux.com';
+
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser]       = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const formatUser = (supaUser) => ({
+    id:      supaUser.id,
+    email:   supaUser.email,
+    name:    supaUser.user_metadata?.name || supaUser.email.split('@')[0],
+    isAdmin: supaUser.email === ADMIN_EMAIL,
+  });
+
   useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) setUser(formatUser(session.user));
+      setLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (session?.user) setUser(formatUser(session.user));
+        else setUser(null);
       }
-    } catch {
-      console.error('Failed to parse user data');
-    }
-    setLoading(false);
+    );
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const login = (email, password) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const user = {
-          id: 1,
-          name: email.split('@')[0],
-          email: email,
-        };
-        setUser(user);
-        localStorage.setItem('user', JSON.stringify(user));
-        resolve(user);
-      }, 1000);
+  const register = async (name, email, password) => {
+    const { data, error } = await supabase.auth.signUp({
+      email, password, options: { data: { name } },
     });
+    if (error) throw error;
+    return data;
   };
 
-  const register = (name, email, password) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const user = {
-          id: Date.now(),
-          name: name,
-          email: email,
-        };
-        setUser(user);
-        localStorage.setItem('user', JSON.stringify(user));
-        resolve(user);
-      }, 1000);
+  const login = async (email, password) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email, password,
     });
+    if (error) throw error;
+    return data;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
-    localStorage.removeItem('user');
+  };
+
+  const updateProfile = async (updates) => {
+    const { data, error } = await supabase.auth.updateUser({ data: updates });
+    if (error) throw error;
+    setUser(prev => ({ ...prev, ...updates }));
+    return data;
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, updateProfile }}>
       {!loading && children}
     </AuthContext.Provider>
   );
@@ -62,8 +69,6 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within AuthProvider');
   return context;
 };

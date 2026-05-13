@@ -1,0 +1,271 @@
+/* ===== COLLECTION PAGE (shared by NewArrivalsPage + TrendingPage) ===== */
+.col-page {
+  min-height: 100vh;
+  background: #f5f6fa;
+  padding: 2rem;
+  padding-top: 7rem;
+}
+
+.col-header {
+  max-width: 1200px;
+  margin: 0 auto 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.col-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  color: #888;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.col-back:hover { color: #0a0a14; }
+
+.col-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #999;
+  margin: 0;
+}
+
+.col-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  color: #0a0a14;
+  letter-spacing: -1px;
+  margin: 0;
+  line-height: 1;
+}
+
+.col-count {
+  font-size: 0.82rem;
+  color: #aaa;
+  margin: 0;
+}
+
+/* Grid */
+.col-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+/* Card */
+.col-card {
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.col-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+/* Image */
+.col-card-img-wrap {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #ececec;
+}
+
+.col-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.col-card:hover .col-card-img { transform: scale(1.04); }
+
+/* Badge */
+.col-badge {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  background: white;
+  color: #0a0a14;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+  border-radius: 50px;
+  z-index: 2;
+}
+
+.col-badge--dark {
+  background: #0a0a14;
+  color: white;
+}
+
+/* Wishlist button */
+.col-wish-btn {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #0a0a14;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s, color 0.2s;
+  z-index: 2;
+}
+
+.col-wish-btn:hover  { transform: scale(1.1); }
+.col-wish-btn.active { color: #e74c3c; }
+
+/* Info */
+.col-card-info {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.col-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.col-card-category {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #aaa;
+}
+
+.col-card-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #0a0a14;
+  margin: 0;
+}
+
+.col-card-color {
+  font-size: 0.72rem;
+  color: #aaa;
+}
+
+.col-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.col-card-price {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0a0a14;
+}
+
+.col-cart-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.85rem;
+  background: #0a0a14;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+/* ===== TABS ===== */
+.col-tabs-wrap {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.col-tabs-wrap::-webkit-scrollbar {
+  display: none;
+}
+
+.col-tabs {
+  display: flex;
+  gap: 0.5rem;
+  width: max-content;
+}
+
+.col-tab {
+  padding: 0.55rem 1.25rem;
+  border-radius: 50px;
+  border: 0.5px solid #e0e0e0;
+  background: white;
+  color: #888;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.col-tab:hover {
+  border-color: #0a0a14;
+  color: #0a0a14;
+}
+
+.col-tab.active {
+  background: #0a0a14;
+  color: white;
+  border-color: #0a0a14;
+}
+
+/* Gold badge for Luxury */
+.col-badge--gold {
+  background: #c9a84c;
+  color: white;
+}
+
+.col-cart-btn.in-cart {
+  background: white;
+  color: #0a0a14;
+  border: 0.5px solid #0a0a14;
+}
+
+.col-cart-btn:hover { background: #2a2a3a; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .col-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .col-page { padding: 1.5rem; padding-top: 6rem; }
+  .col-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+}
+
+@media (max-width: 480px) {
+  .col-grid { grid-template-columns: 1fr; }
+}
