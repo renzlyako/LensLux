@@ -7,7 +7,7 @@ import {
   Plus, X, ChevronDown, Upload, Eye, EyeOff,
 } from 'lucide-react';
 import { useAuth }        from '../context/AuthContext';
-import { supabaseAdmin }  from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import { products as allProducts } from '../data/products';
 import './Admin.css';
 
