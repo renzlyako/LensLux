@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Heart, ShoppingBag, ArrowLeft } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart }     from '../context/CartContext';
-import { trendingData } from '../components/home/Trending';
+import { trendingData } from '../components/Home/Trending';
 import './CollectionPage.css';
 
 const TrendingPage = () => {
