@@ -3,8 +3,8 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Heart, ShoppingBag, ArrowLeft } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart }     from '../context/CartContext';
-import { newArrivalsData } from '../components/home/NewArrivals';
-import { trendingData }    from '../components/home/Trending';
+import { newArrivalsData } from '../components/Home/NewArrivals';
+import { trendingData }    from '../components/Home/Trending';
 
 import c1 from '../assets/c1.png';
 import c2 from '../assets/c2.png';

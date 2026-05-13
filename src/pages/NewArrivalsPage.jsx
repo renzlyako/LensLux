@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Heart, ShoppingBag, ArrowLeft } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart }     from '../context/CartContext';
-import { newArrivalsData } from '../components/home/NewArrivals';
+import { newArrivalsData } from '../components/Home/NewArrivals';
 import './CollectionPage.css';
 
 const NewArrivalsPage = () => {
