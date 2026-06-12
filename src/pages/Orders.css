@@ -707,6 +707,104 @@
   margin: 0;
 }
 
+.profile-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.clear-history-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.clear-history-btn:hover {
+  background: #c0392b;
+}
+
+.confirm-icon {
+  margin-bottom: 1rem;
+  text-align: center;
+  color: #e74c3c;
+}
+
+.confirm-title {
+  text-align: center;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.confirm-message {
+  text-align: center;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.confirm-cancel {
+  padding: 0.6rem 1.5rem;
+  background: #ecf0f1;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.confirm-cancel:hover {
+  background: #bdc3c7;
+}
+
+.confirm-ok {
+  padding: 0.6rem 1.5rem;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.order-action-btn.delete {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #e74c3c;
+  color: white;
+  padding: 0.5rem 0.8rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.order-action-btn.delete:hover {
+  background: #c0392b;
+}
+
+.confirm-ok:hover {
+  background: #c0392b;
+}
+
 .modal-success span {
   font-size: 0.75rem;
   color: #bbb;

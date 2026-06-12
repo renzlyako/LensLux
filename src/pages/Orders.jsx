@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Package, MapPin, User, LogOut, X, CreditCard, Lock } from 'lucide-react';
+import { ArrowLeft, Package, MapPin, User, LogOut, X, CreditCard, Lock, Trash2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './Orders.css';
 
@@ -19,6 +19,23 @@ const getMockStatus = (index) => {
   const statuses = ['To Pay', 'To Ship', 'To Receive', 'Completed', 'Completed', 'Cancelled'];
   return statuses[index % statuses.length];
 };
+
+// ── Confirm Dialog ──
+const ConfirmDialog = ({ message, onConfirm, onCancel, title = 'Confirm?' }) => (
+  <div className="modal-backdrop" onClick={onCancel}>
+    <div className="modal-box" onClick={e => e.stopPropagation()}>
+      <div className="confirm-icon">
+        <Trash2 size={24} strokeWidth={1.5} />
+      </div>
+      <h3 className="confirm-title">{title}</h3>
+      <p className="confirm-message">{message}</p>
+      <div className="confirm-actions">
+        <button className="confirm-cancel" onClick={onCancel}>Cancel</button>
+        <button className="confirm-ok" onClick={onConfirm}>Delete</button>
+      </div>
+    </div>
+  </div>
+);
 
 // ── Pay Now Modal ──
 const PayNowModal = ({ order, onClose, onSuccess }) => {
@@ -75,13 +92,10 @@ const PayNowModal = ({ order, onClose, onSuccess }) => {
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal-box" onClick={e => e.stopPropagation()}>
-
-        {/* Close */}
         <button className="modal-close" onClick={onClose}>
           <X size={18} strokeWidth={1.5} />
         </button>
 
-        {/* ── FORM step ── */}
         {step === 'form' && (
           <>
             <div className="modal-header">
@@ -92,7 +106,6 @@ const PayNowModal = ({ order, onClose, onSuccess }) => {
               </div>
             </div>
 
-            {/* Order mini summary */}
             <div className="modal-order-summary">
               {order.items?.map((item, i) => (
                 <div key={i} className="modal-order-item">
@@ -107,7 +120,6 @@ const PayNowModal = ({ order, onClose, onSuccess }) => {
               </div>
             </div>
 
-            {/* Card form */}
             <form className="modal-form" onSubmit={handleSubmit}>
               <div className="modal-field">
                 <label>Cardholder Name</label>
@@ -173,7 +185,6 @@ const PayNowModal = ({ order, onClose, onSuccess }) => {
           </>
         )}
 
-        {/* ── LOADING step ── */}
         {step === 'loading' && (
           <div className="modal-loading">
             <div className="modal-spinner" />
@@ -182,7 +193,6 @@ const PayNowModal = ({ order, onClose, onSuccess }) => {
           </div>
         )}
 
-        {/* ── SUCCESS step ── */}
         {step === 'success' && (
           <div className="modal-success">
             <div className="modal-success-icon">✓</div>
@@ -191,19 +201,19 @@ const PayNowModal = ({ order, onClose, onSuccess }) => {
             <span>Order #{String(order.id).slice(-6)}</span>
           </div>
         )}
-
       </div>
     </div>
   );
 };
 
 const Orders = () => {
-  const [orders, setOrders]           = useState([]);
-  const [activeTab, setActiveTab]     = useState('orders');
+  const [orders, setOrders]             = useState([]);
+  const [activeTab, setActiveTab]       = useState('orders');
   const [statusFilter, setStatusFilter] = useState('All');
-  const [payingOrder, setPayingOrder] = useState(null);
-  const { user, logout }              = useAuth();
-  const navigate                      = useNavigate();
+  const [payingOrder, setPayingOrder]   = useState(null);
+  const [confirmDialog, setConfirmDialog] = useState(null);
+  const { user, logout }                = useAuth();
+  const navigate                        = useNavigate();
 
   useEffect(() => {
     const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
@@ -224,7 +234,6 @@ const Orders = () => {
       o.id === orderId ? { ...o, status: 'To Ship' } : o
     );
     setOrders(updated);
-    // Save updated status to localStorage
     const stored = JSON.parse(localStorage.getItem('orders') || '[]');
     const updatedStored = stored.map(o =>
       o.id === orderId ? { ...o, status: 'To Ship' } : o
@@ -244,6 +253,35 @@ const Orders = () => {
     localStorage.setItem('orders', JSON.stringify(updatedStored));
   };
 
+  const handleDeleteOrder = (orderId) => {
+    setConfirmDialog({
+      title: 'Delete Transaction?',
+      message: 'This transaction will be permanently removed from your order history.',
+      onConfirm: () => {
+        const updated = orders.filter(o => o.id !== orderId);
+        setOrders(updated);
+        const stored = JSON.parse(localStorage.getItem('orders') || '[]');
+        const updatedStored = stored.filter(o => o.id !== orderId);
+        localStorage.setItem('orders', JSON.stringify(updatedStored));
+        setConfirmDialog(null);
+      },
+      onCancel: () => setConfirmDialog(null),
+    });
+  };
+
+  const handleClearTransactions = () => {
+    setConfirmDialog({
+      title: 'Clear All Transactions?',
+      message: 'This will permanently delete all your transactions from the order history.',
+      onConfirm: () => {
+        setOrders([]);
+        localStorage.setItem('orders', JSON.stringify([]));
+        setConfirmDialog(null);
+      },
+      onCancel: () => setConfirmDialog(null),
+    });
+  };
+
   const filteredOrders = statusFilter === 'All'
     ? orders
     : orders.filter(o => o.status === statusFilter);
@@ -256,6 +294,15 @@ const Orders = () => {
           order={payingOrder}
           onClose={() => setPayingOrder(null)}
           onSuccess={handlePaymentSuccess}
+        />
+      )}
+
+      {confirmDialog && (
+        <ConfirmDialog
+          title={confirmDialog.title}
+          message={confirmDialog.message}
+          onConfirm={confirmDialog.onConfirm}
+          onCancel={confirmDialog.onCancel}
         />
       )}
 
@@ -303,7 +350,18 @@ const Orders = () => {
 
           {activeTab === 'orders' && (
             <div className="profile-section">
-              <h2 className="profile-section-title">My Orders</h2>
+              <div className="profile-section-header">
+                <h2 className="profile-section-title">My Orders</h2>
+                {orders.length > 0 && (
+                  <button
+                    className="clear-history-btn"
+                    onClick={handleClearTransactions}
+                  >
+                    <Trash2 size={14} strokeWidth={1.5} />
+                    Clear Transactions
+                  </button>
+                )}
+              </div>
 
               <div className="order-status-tabs">
                 {ORDER_STATUSES.map(status => (
@@ -391,21 +449,52 @@ const Orders = () => {
                               >
                                 Cancel Order
                               </button>
+                              <button
+                                className="order-action-btn delete"
+                                onClick={() => handleDeleteOrder(order.id)}
+                              >
+                                <Trash2 size={13} strokeWidth={1.5} />
+                                Delete
+                              </button>
                             </>
                           )}
                           {order.status === 'To Ship' && (
-                            <button className="order-action-btn ghost" onClick={() => handleCancelOrder(order.id)}>
-                              Cancel Order
-                            </button>
+                            <>
+                              <button className="order-action-btn ghost" onClick={() => handleCancelOrder(order.id)}>
+                                Cancel Order
+                              </button>
+                              <button
+                                className="order-action-btn delete"
+                                onClick={() => handleDeleteOrder(order.id)}
+                              >
+                                <Trash2 size={13} strokeWidth={1.5} />
+                                Delete
+                              </button>
+                            </>
                           )}
                           {order.status === 'To Receive' && (
-                            <button className="order-action-btn primary">Order Received</button>
+                            <>
+                              <button className="order-action-btn primary">Order Received</button>
+                              <button
+                                className="order-action-btn delete"
+                                onClick={() => handleDeleteOrder(order.id)}
+                              >
+                                <Trash2 size={13} strokeWidth={1.5} />
+                                Delete
+                              </button>
+                            </>
                           )}
-                          {(order.status === 'Completed' || order.status === 'Cancelled') && (
-                            <button className="order-action-btn ghost">Buy Again</button>
-                          )}
-                          {order.status === 'Return/Refund' && (
-                            <button className="order-action-btn ghost">Track Refund</button>
+                          {(order.status === 'Completed' || order.status === 'Cancelled' || order.status === 'Return/Refund') && (
+                            <>
+                              <button className="order-action-btn ghost">Buy Again</button>
+                              <button
+                                className="order-action-btn delete"
+                                onClick={() => handleDeleteOrder(order.id)}
+                              >
+                                <Trash2 size={13} strokeWidth={1.5} />
+                                Delete
+                              </button>
+                            </>
                           )}
                         </div>
                       </div>

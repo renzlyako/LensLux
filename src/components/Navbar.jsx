@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Heart, ShoppingBag, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import './Navbar.css';
 
 const navLinks = [
@@ -15,9 +17,45 @@ const navLinks = [
 const Navbar = () => {
   const [menuOpen, setMenuOpen]       = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [orders, setOrders]           = useState([]);
   const { user, logout }              = useAuth();
+  const { cart }                      = useCart();
+  const { wishlist }                  = useWishlist();
   const navigate                      = useNavigate();
   const location                      = useLocation();
+
+  // Load orders on mount
+  useEffect(() => {
+    const loadOrders = () => {
+      const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+      setOrders(storedOrders);
+    };
+    loadOrders();
+  }, []);
+
+  // Reload orders when localStorage changes (from admin tab)
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'orders') {
+        const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+        setOrders(storedOrders);
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  // Reload orders when page becomes visible (same tab refresh)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+        setOrders(storedOrders);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
 
   const handleNavClick = (e, link) => {
     e.preventDefault();
@@ -56,6 +94,8 @@ const Navbar = () => {
     setMenuOpen(false);
   };
 
+  const pendingOrdersCount = orders.filter(o => o.status === 'To Pay' || o.status === 'To Ship' || o.status === 'To Receive').length;
+
   return (
     <nav className="navbar">
       <div className="nav-container">
@@ -81,14 +121,23 @@ const Navbar = () => {
         <div className="nav-actions">
           {user ? (
             <>
-              <Link to="/wishlist" className="nav-icon-btn" aria-label="Favorites">
+              <Link to="/wishlist" className="nav-icon-btn nav-badge-wrap" aria-label="Favorites">
                 <Heart size={18} strokeWidth={1.5} />
+                {wishlist && wishlist.length > 0 && (
+                  <span className="nav-badge">{wishlist.length}</span>
+                )}
               </Link>
-              <Link to="/cart" className="nav-icon-btn" aria-label="Cart">
+              <Link to="/cart" className="nav-icon-btn nav-badge-wrap" aria-label="Cart">
                 <ShoppingBag size={18} strokeWidth={1.5} />
+                {cart && cart.length > 0 && (
+                  <span className="nav-badge">{cart.length}</span>
+                )}
               </Link>
-              <Link to="/orders" className="nav-icon-btn" aria-label="Profile">
+              <Link to="/orders" className="nav-icon-btn nav-badge-wrap" aria-label="Profile">
                 <User size={18} strokeWidth={1.5} />
+                {pendingOrdersCount > 0 && (
+                  <span className="nav-badge">{pendingOrdersCount}</span>
+                )}
               </Link>
               <button onClick={handleLogout} className="nav-cta">Logout</button>
             </>

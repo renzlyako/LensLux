@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Heart, ShoppingBag, ArrowLeft } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart }     from '../context/CartContext';
-import { newArrivalsData } from '../components/Home/NewArrivals';
-import { trendingData }    from '../components/Home/Trending';
+import { useAuth }     from '../context/AuthContext';
+import { newArrivalsData } from '../components/home/NewArrivals';
+import { trendingData }    from '../components/home/Trending';
 
 import c1 from '../assets/c1.png';
 import c2 from '../assets/c2.png';
@@ -49,37 +50,50 @@ const tabs = [
   { key: 'Trending',     label: 'Trending'     },
 ];
 
-const allItems = [
-  ...classicItems,
-  ...sportItems,
-  ...luxuryItems,
-  ...newArrivalsData,
-  ...trendingData,
-];
-
 const CollectionPage = () => {
   const [searchParams]  = useSearchParams();
   const initialCategory = searchParams.get('category') || 'All';
-  const [activeTab, setActiveTab] = useState(initialCategory);
+  const [activeTab, setActiveTab]         = useState(initialCategory);
+  const [adminProducts, setAdminProducts] = useState([]);
 
   const { addToWishlist, isInWishlist } = useWishlist();
   const { addToCart, cart }             = useCart();
+  const { user }                        = useAuth();
+  const navigate                        = useNavigate();
+
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem('admin-products') || '[]');
+    setAdminProducts(stored);
+  }, []);
 
   const isInCart = (id) => cart.some(item => item.id === id);
 
+  const handleAddToCart = (item) => {
+    if (!user) { navigate('/login'); return; }
+    addToCart(item);
+  };
+
+  const handleWishlist = (item) => {
+    if (!user) { navigate('/login'); return; }
+    addToWishlist(item);
+  };
+
+  const allItems = [
+    ...classicItems, ...sportItems, ...luxuryItems,
+    ...newArrivalsData, ...trendingData, ...adminProducts,
+  ];
+
   const filtered =
-    activeTab === 'All'          ? allItems        :
-    activeTab === 'Classic'      ? classicItems    :
-    activeTab === 'Sport'        ? sportItems      :
-    activeTab === 'Luxury'       ? luxuryItems     :
+    activeTab === 'All'          ? allItems :
+    activeTab === 'Classic'      ? [...classicItems,  ...adminProducts.filter(p => p.category === 'Classic')]  :
+    activeTab === 'Sport'        ? [...sportItems,    ...adminProducts.filter(p => p.category === 'Sport')]    :
+    activeTab === 'Luxury'       ? [...luxuryItems,   ...adminProducts.filter(p => p.category === 'Luxury')]   :
     activeTab === 'New Arrivals' ? newArrivalsData :
     activeTab === 'Trending'     ? trendingData    :
     allItems;
 
   return (
     <div className="col-page">
-
-      {/* Header */}
       <div className="col-header">
         <Link to="/" className="col-back">
           <ArrowLeft size={16} strokeWidth={1.5} /> Back
@@ -91,7 +105,6 @@ const CollectionPage = () => {
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="col-tabs-wrap">
         <div className="col-tabs">
           {tabs.map(tab => (
@@ -106,35 +119,23 @@ const CollectionPage = () => {
         </div>
       </div>
 
-      {/* Grid */}
       <div className="col-grid">
         {filtered.map(item => (
           <div key={item.id} className="col-card">
             <div className="col-card-img-wrap">
-              <img
-                src={item.img || item.images?.[0]}
-                alt={item.name}
-                className="col-card-img"
-              />
+              <img src={item.img || item.images?.[0]} alt={item.name} className="col-card-img" />
               <span className={`col-badge ${
-                item.category === 'Luxury'
-                  ? 'col-badge--gold'
-                  : item.badge === 'Trending' || item.badge === 'Best Seller'
-                  ? 'col-badge--dark'
-                  : ''
+                item.category === 'Luxury' ? 'col-badge--gold' :
+                item.badge === 'Trending' || item.badge === 'Best Seller' ? 'col-badge--dark' : ''
               }`}>
                 {item.badge || item.category}
               </span>
               <button
                 className={`col-wish-btn ${isInWishlist(item.id) ? 'active' : ''}`}
-                onClick={() => addToWishlist(item)}
+                onClick={() => handleWishlist(item)}
                 aria-label="Add to favorites"
               >
-                <Heart
-                  size={14}
-                  strokeWidth={1.5}
-                  fill={isInWishlist(item.id) ? 'currentColor' : 'none'}
-                />
+                <Heart size={14} strokeWidth={1.5} fill={isInWishlist(item.id) ? 'currentColor' : 'none'} />
               </button>
             </div>
             <div className="col-card-info">
@@ -147,7 +148,7 @@ const CollectionPage = () => {
                 <span className="col-card-price">${item.price}</span>
                 <button
                   className={`col-cart-btn ${isInCart(item.id) ? 'in-cart' : ''}`}
-                  onClick={() => addToCart(item)}
+                  onClick={() => handleAddToCart(item)}
                 >
                   <ShoppingBag size={14} strokeWidth={1.5} />
                   {isInCart(item.id) ? 'Added ✓' : 'Add to Cart'}
@@ -157,7 +158,6 @@ const CollectionPage = () => {
           </div>
         ))}
       </div>
-
     </div>
   );
 };

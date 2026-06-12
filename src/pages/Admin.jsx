@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate }         from 'react-router-dom';
 import {
   LayoutDashboard, ShoppingBag, Package,
   Users, LogOut, TrendingUp, DollarSign,
-  Clock, CheckCircle, Pencil, Trash2,
-  Plus, X, ChevronDown, Upload, Eye, EyeOff,
+  Clock, Pencil, Trash2, Plus, X,
+  ChevronDown, Upload,
 } from 'lucide-react';
-import { useAuth }        from '../context/AuthContext';
-import { supabase } from '../lib/supabase';
+import { useAuth }       from '../context/AuthContext';
+import { supabaseAdmin } from '../lib/supabase';
 import { products as allProducts } from '../data/products';
 import './Admin.css';
 
@@ -21,9 +21,8 @@ const STATUS_COLORS  = {
   'Cancelled':     '#e74c3c',
   'Return/Refund': '#f39c12',
 };
-const CATEGORIES = ['Classic', 'Sport', 'Luxury', 'Electronics', 'Fashion', 'Accessories'];
+const CATEGORIES = ['Classic','Sport','Luxury','Electronics','Fashion','Accessories'];
 
-// ── Custom Confirm Dialog ──
 const ConfirmDialog = ({ message, onConfirm, onCancel }) => (
   <div className="confirm-backdrop">
     <div className="confirm-box">
@@ -34,7 +33,7 @@ const ConfirmDialog = ({ message, onConfirm, onCancel }) => (
       <p className="confirm-message">{message}</p>
       <div className="confirm-actions">
         <button className="confirm-cancel" onClick={onCancel}>Cancel</button>
-        <button className="confirm-ok" onClick={onConfirm}>Delete</button>
+        <button className="confirm-ok"     onClick={onConfirm}>Delete</button>
       </div>
     </div>
   </div>
@@ -45,10 +44,14 @@ const Admin = () => {
   const navigate                  = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
 
-  const [orders, setOrders]           = useState([]);
-  const [orderFilter, setOrderFilter] = useState('All');
+  const [orders, setOrders]             = useState([]);
+  const [orderFilter, setOrderFilter]   = useState('All');
 
-  const [products, setProducts]       = useState(allProducts);
+  const [products, setProducts] = useState(() => {
+    const stored = JSON.parse(localStorage.getItem('admin-products') || '[]');
+    return [...stored, ...allProducts];
+  });
+
   const [showProductModal, setShowProductModal] = useState(false);
   const [editingProduct, setEditingProduct]     = useState(null);
   const [uploading, setUploading]               = useState(false);
@@ -57,11 +60,9 @@ const Admin = () => {
     imageFile: null, imagePreview: '',
   });
 
-  // Custom confirm state
   const [confirmDialog, setConfirmDialog] = useState(null);
-
-  const [users, setUsers]           = useState([]);
-  const [usersLoading, setUsersLoading] = useState(false);
+  const [users, setUsers]                 = useState([]);
+  const [usersLoading, setUsersLoading]   = useState(false);
 
   useEffect(() => {
     if (user && user.email !== ADMIN_EMAIL) navigate('/');
@@ -97,6 +98,11 @@ const Admin = () => {
     ));
   };
 
+  const saveAdminProducts = (list) => {
+    const adminOnly = list.filter(p => typeof p.id === 'number' && p.id > 1000000000000);
+    localStorage.setItem('admin-products', JSON.stringify(adminOnly));
+  };
+
   const openAddProduct = () => {
     setEditingProduct(null);
     setProductForm({ name: '', price: '', category: '', description: '', imageFile: null, imagePreview: '' });
@@ -120,7 +126,11 @@ const Admin = () => {
     setConfirmDialog({
       message: 'This will permanently delete the product.',
       onConfirm: () => {
-        setProducts(prev => prev.filter(p => p.id !== id));
+        setProducts(prev => {
+          const updated = prev.filter(p => p.id !== id);
+          saveAdminProducts(updated);
+          return updated;
+        });
         setConfirmDialog(null);
       },
       onCancel: () => setConfirmDialog(null),
@@ -139,7 +149,6 @@ const Admin = () => {
       const { error } = await supabaseAdmin.storage
         .from('product-images')
         .upload(fileName, file, { upsert: true });
-
       if (!error) {
         const { data: urlData } = supabaseAdmin.storage
           .from('product-images')
@@ -149,22 +158,31 @@ const Admin = () => {
     }
 
     if (editingProduct) {
-      setProducts(prev => prev.map(p =>
-        p.id === editingProduct.id
-          ? { ...p, ...productForm, price: parseFloat(productForm.price), images: [imageUrl] }
-          : p
-      ));
+      setProducts(prev => {
+        const updated = prev.map(p =>
+          p.id === editingProduct.id
+            ? { ...p, ...productForm, price: parseFloat(productForm.price), images: [imageUrl] }
+            : p
+        );
+        saveAdminProducts(updated);
+        return updated;
+      });
     } else {
-      setProducts(prev => [{
-        id: Date.now(),
+      const newProduct = {
+        id:          Date.now(),
         name:        productForm.name,
         price:       parseFloat(productForm.price),
         category:    productForm.category,
         description: productForm.description,
-        rating:  4.5, reviews: 0, inStock: true,
-        images:  [imageUrl],
+        rating: 4.5, reviews: 0, inStock: true,
+        images: [imageUrl],
         features: [], specifications: {},
-      }, ...prev]);
+      };
+      setProducts(prev => {
+        const updated = [newProduct, ...prev];
+        saveAdminProducts(updated);
+        return updated;
+      });
     }
 
     setUploading(false);
@@ -184,7 +202,6 @@ const Admin = () => {
   return (
     <div className="admin-layout">
 
-      {/* Custom confirm dialog */}
       {confirmDialog && (
         <ConfirmDialog
           message={confirmDialog.message}
@@ -467,7 +484,6 @@ const Admin = () => {
             <h2 className="modal-title">
               {editingProduct ? 'Edit Product' : 'Add Product'}
             </h2>
-
             <form onSubmit={handleSaveProduct} className="modal-form">
 
               {/* Image upload */}

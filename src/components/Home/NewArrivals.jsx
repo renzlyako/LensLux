@@ -1,8 +1,9 @@
 import { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Heart, ShoppingBag } from 'lucide-react';
 import { useWishlist } from '../../context/WishlistContext';
 import { useCart }     from '../../context/CartContext';
+import { useAuth }     from '../../context/AuthContext';
 import new1 from '../../assets/new1.png';
 import new2 from '../../assets/new2.png';
 import new3 from '../../assets/new3.png';
@@ -17,15 +18,15 @@ import './NewArrivals.css';
 const VISIBLE = 4;
 
 export const newArrivalsData = [
-  { id: 'n1', img: new1, badge: 'New',       name: 'Riviera Classic',   color: 'Midnight Black', price: 129, inStock: true, category: 'Classic',    images: [new1] },
-  { id: 'n2', img: new2, badge: 'New Color', name: 'Monaco Slim',       color: 'Sand Dune',      price: 149, inStock: true, category: 'Classic',    images: [new2] },
-  { id: 'n3', img: new3, badge: 'New',       name: 'Capri Sport',       color: 'Ocean Teal',     price: 189, inStock: true, category: 'Sport',      images: [new3] },
-  { id: 'n4', img: new4, badge: 'New Color', name: 'Santorini Oval',    color: 'Rose Gold',      price: 159, inStock: true, category: 'Luxury',     images: [new4] },
-  { id: 'n5', img: new5, badge: 'New',       name: 'Ibiza Retro',       color: 'Tortoise Brown', price: 139, inStock: true, category: 'Classic',    images: [new5] },
-  { id: 'n6', img: new6, badge: 'New Color', name: 'Cannes Cat-Eye',    color: 'Pearl White',    price: 169, inStock: true, category: 'Luxury',     images: [new6] },
-  { id: 'n7', img: new7, badge: 'New',       name: 'Malibu Wraparound', color: 'Smoke Grey',     price: 199, inStock: true, category: 'Sport',      images: [new7] },
-  { id: 'n8', img: new8, badge: 'New Color', name: 'Amalfi Round',      color: 'Olive Green',    price: 119, inStock: true, category: 'Classic',    images: [new8] },
-  { id: 'n9', img: new9, badge: 'New',       name: 'Biarritz Aviator',  color: 'Gold Chrome',    price: 179, inStock: true, category: 'Luxury',     images: [new9] },
+  { id: 'n1', img: new1, badge: 'New',       name: 'Riviera Classic',   color: 'Midnight Black', price: 129, inStock: true, category: 'Classic', images: [new1] },
+  { id: 'n2', img: new2, badge: 'New Color', name: 'Monaco Slim',       color: 'Sand Dune',      price: 149, inStock: true, category: 'Classic', images: [new2] },
+  { id: 'n3', img: new3, badge: 'New',       name: 'Capri Sport',       color: 'Ocean Teal',     price: 189, inStock: true, category: 'Sport',   images: [new3] },
+  { id: 'n4', img: new4, badge: 'New Color', name: 'Santorini Oval',    color: 'Rose Gold',      price: 159, inStock: true, category: 'Luxury',  images: [new4] },
+  { id: 'n5', img: new5, badge: 'New',       name: 'Ibiza Retro',       color: 'Tortoise Brown', price: 139, inStock: true, category: 'Classic', images: [new5] },
+  { id: 'n6', img: new6, badge: 'New Color', name: 'Cannes Cat-Eye',    color: 'Pearl White',    price: 169, inStock: true, category: 'Luxury',  images: [new6] },
+  { id: 'n7', img: new7, badge: 'New',       name: 'Malibu Wraparound', color: 'Smoke Grey',     price: 199, inStock: true, category: 'Sport',   images: [new7] },
+  { id: 'n8', img: new8, badge: 'New Color', name: 'Amalfi Round',      color: 'Olive Green',    price: 119, inStock: true, category: 'Classic', images: [new8] },
+  { id: 'n9', img: new9, badge: 'New',       name: 'Biarritz Aviator',  color: 'Gold Chrome',    price: 179, inStock: true, category: 'Luxury',  images: [new9] },
 ];
 
 const looped = [...newArrivalsData, ...newArrivalsData.slice(0, VISIBLE)];
@@ -36,8 +37,20 @@ const NewArrivals = () => {
   const isTransitioning         = useRef(false);
   const { addToWishlist, isInWishlist } = useWishlist();
   const { addToCart }                   = useCart();
+  const { user }                        = useAuth();
+  const navigate                        = useNavigate();
 
   const offset = -(index * (100 / VISIBLE));
+
+  const handleAddToCart = (item) => {
+    if (!user) { navigate('/login'); return; }
+    addToCart(item);
+  };
+
+  const handleWishlist = (item) => {
+    if (!user) { navigate('/login'); return; }
+    addToWishlist(item);
+  };
 
   const next = () => {
     if (isTransitioning.current) return;
@@ -81,7 +94,6 @@ const NewArrivals = () => {
         </div>
         <Link to="/collection?category=New Arrivals" className="na-view-all">View All →</Link>
       </div>
-
       <div className="na-carousel-wrapper">
         <button className="na-btn" onClick={prev} aria-label="Previous">&#8249;</button>
         <div className="na-track">
@@ -100,7 +112,7 @@ const NewArrivals = () => {
                   <span className="na-badge">{item.badge}</span>
                   <button
                     className={`na-wish-btn ${isInWishlist(item.id) ? 'active' : ''}`}
-                    onClick={() => addToWishlist(item)}
+                    onClick={() => handleWishlist(item)}
                     aria-label="Add to favorites"
                   >
                     <Heart size={14} strokeWidth={1.5} fill={isInWishlist(item.id) ? 'currentColor' : 'none'} />
@@ -115,7 +127,7 @@ const NewArrivals = () => {
                     <span className="na-card-price">${item.price}</span>
                     <button
                       className="na-cart-btn"
-                      onClick={() => addToCart(item)}
+                      onClick={() => handleAddToCart(item)}
                       aria-label="Add to cart"
                     >
                       <ShoppingBag size={14} strokeWidth={1.5} />
