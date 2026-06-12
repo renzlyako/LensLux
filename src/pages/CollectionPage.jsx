@@ -4,8 +4,8 @@ import { Heart, ShoppingBag, ArrowLeft } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart }     from '../context/CartContext';
 import { useAuth }     from '../context/AuthContext';
-import { newArrivalsData } from '../pages/NewArrivalsPage';
-import { trendingData }    from '../pages/TrendingPage';
+import { newArrivalsData } from '../components/Home/NewArrivals';
+import { trendingData }    from '../components/Home/Trending';
 
 import c1 from '../assets/c1.png';
 import c2 from '../assets/c2.png';

@@ -5,6 +5,9 @@ import { useCart }     from '../context/CartContext';
 import { trendingData } from '../components/Home/Trending';
 import './CollectionPage.css';
 
+// Safely re-export data in case other components look for it here
+export { trendingData };
+
 const TrendingPage = () => {
   const { addToWishlist, isInWishlist } = useWishlist();
   const { addToCart }                   = useCart();
